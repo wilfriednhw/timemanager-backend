@@ -15,10 +15,7 @@ RUN mix local.hex --force
 RUN mix local.rebar --force
 
 # Install deps
-RUN mix deps.get --force
-
-# Compile the project
-# RUN mix do compile -- force
+RUN mix deps.get 
 
 
 EXPOSE 7000

@@ -2,10 +2,10 @@ import Config
 
 # Configure your database
 config :moodle, Moodle.Repo,
-  username: "postgres",
-  password: "postgres",
-  database: "moodle_db",
-  hostname: "db",
+  username: System.get_env("PGUSER", "postgres"),
+  password: System.get_env("PGPASSWORD", "postgres"),
+  database: System.get_env("PGDATABASE", "moodle_db"),
+  hostname: System.get_env("PGHOST", "db"),
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
 
@@ -20,7 +20,7 @@ config :moodle, Moodle.Repo,
 # which you should run after static files are built and
 # before starting your production server.
 config :moodle, MoodleWeb.Endpoint,
-  url: [host: "example.com", port: 80],
+  url: [host: "0.0.0.0", port: 7000],
   cache_static_manifest: "priv/static/cache_manifest.json"
 
 # Do not print debug messages in production
