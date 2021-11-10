@@ -6,6 +6,7 @@ import Config
 # to provide built-in test partitioning in CI environment.
 # Run `mix help test` for more information.
 config :moodle, Moodle.Repo,
+
   username: "postgres",
   password: "postgres",
   database: "moodledb",
