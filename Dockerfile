@@ -17,5 +17,4 @@ RUN mix local.rebar --force
 # Install deps
 RUN mix deps.get 
 
-
 EXPOSE 7000

@@ -1,0 +1,43 @@
+image: ubuntu:16.04
+
+stages:
+  - deploy
+
+deploy_staging:
+  stage: deploy
+  script:
+    - echo "Deploy to staging server"
+    - apt-get update
+    - apt-get install -y python-pip git
+    - pip install gigalixir
+    - echo "Logging into gigalixir"
+    - gigalixir login -e "$GIGALIXIR_EMAIL" -y -p "$GIGALIXIR_PASSWORD"
+    - echo "Setting git remote"
+    - gigalixir git:remote $GIGALIXIR_APP_NAME-staging
+    - echo "Pushing"
+    - git push -f gigalixir HEAD:refs/heads/master
+  environment:
+    name: staging
+    url: https://$GIGALIXIR_APP_NAME-staging.gigalixirapp.com
+  only:
+    - master
+
+deploy_prod:
+  stage: deploy
+  script:
+    - echo "Deploy to production server"
+    - apt-get update
+    - apt-get install -y python-pip git
+    - pip install gigalixir
+    - echo "Logging into gigalixir"
+    - gigalixir login -e "$GIGALIXIR_EMAIL" -y -p "$GIGALIXIR_PASSWORD"
+    - echo "Setting git remote"
+    - gigalixir git:remote $GIGALIXIR_APP_NAME
+    - echo "Pushing"
+    - git push -f gigalixir HEAD:refs/heads/master
+  environment:
+    name: production
+    url: https://$GIGALIXIR_APP_NAME.gigalixirapp.com
+  when: manual
+  only:
+    - master
