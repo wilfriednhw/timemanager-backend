@@ -1,43 +1,56 @@
-image: ubuntu:16.04
+name: Elixir CI
 
-stages:
-  - deploy
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
 
-deploy_staging:
-  stage: deploy
-  script:
-    - echo "Deploy to staging server"
-    - apt-get update
-    - apt-get install -y python-pip git
-    - pip install gigalixir
-    - echo "Logging into gigalixir"
-    - gigalixir login -e "$GIGALIXIR_EMAIL" -y -p "$GIGALIXIR_PASSWORD"
-    - echo "Setting git remote"
-    - gigalixir git:remote $GIGALIXIR_APP_NAME-staging
-    - echo "Pushing"
-    - git push -f gigalixir HEAD:refs/heads/master
-  environment:
-    name: staging
-    url: https://$GIGALIXIR_APP_NAME-staging.gigalixirapp.com
-  only:
-    - master
+jobs:
+  test:
+    name: Build and test
+    runs-on: ubuntu-latest
+    services:
+      db:
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        image: postgres:11
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
-deploy_prod:
-  stage: deploy
-  script:
-    - echo "Deploy to production server"
-    - apt-get update
-    - apt-get install -y python-pip git
-    - pip install gigalixir
-    - echo "Logging into gigalixir"
-    - gigalixir login -e "$GIGALIXIR_EMAIL" -y -p "$GIGALIXIR_PASSWORD"
-    - echo "Setting git remote"
-    - gigalixir git:remote $GIGALIXIR_APP_NAME
-    - echo "Pushing"
-    - git push -f gigalixir HEAD:refs/heads/master
-  environment:
-    name: production
-    url: https://$GIGALIXIR_APP_NAME.gigalixirapp.com
-  when: manual
-  only:
-    - master
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Elixir
+        uses: erlef/setup-elixir@885971a72ed1f9240973bd92ab57af8c1aa68f24
+        with:
+          elixir-version: "1.12.3" # Define the elixir version [required]
+          otp-version: "24.1" # Define the OTP version [required]
+      - name: Restore dependencies cache
+        uses: actions/cache@v2
+        with:
+          path: deps
+          key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
+          restore-keys: ${{ runner.os }}-mix-
+      - name: Install dependencies
+        run: mix deps.get
+      - name: Run tests
+        run: mix test
+      - name: Check Formatting
+        run: mix format --check-formatted
+
+  deploy:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    needs: test
+    steps:
+      - uses: actions/checkout@v1
+      - run: sudo pip install gigalixir --ignore-installed six
+      - run: gigalixir login -e "${{ secrets.GIGALIXIR_EMAIL }}" -y -p "${{ secrets.GIGALIXIR_PASSWORD }}"
+      - run: gigalixir git:remote ${{ secrets.GIGALIXIR_APP_NAME }}
+      - run: git push -f gigalixir HEAD:refs/heads/master
