@@ -5,6 +5,7 @@ version: "3"
 services:
   # Our Phoenix container
   phoenix:
+    images: 886194917453.dkr.ecr.eu-west-3.amazonaws.com/timemanger-backend
     # The build parameters for this container.
     build:
       # Here we define that it should build from the current directory
