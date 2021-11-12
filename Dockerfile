@@ -19,8 +19,8 @@ RUN mix deps.get
 RUN mix deps.compile
 
 # compile and build release
-RUN mix compile,
-RUN mix release,  
+RUN mix compile
+RUN mix release  
 
 # prepare release image
 FROM alpine:3.14.2 AS app
