@@ -15,3 +15,7 @@ test
 
 # Compiled static artifacts
 priv/static
+
+
+assets/node_modules/
+deps/
