@@ -32,4 +32,4 @@ USER nobody
 
 ENV HOME=/app
 
-ENTRYPOINT [ "/app/entrypoint.sh" ] 
+ENTRYPOINT [ "./entrypoint.sh" ] 
