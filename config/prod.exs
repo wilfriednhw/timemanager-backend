@@ -1,15 +1,5 @@
 import Config
 
-# Configure your database
-config :moodle, Moodle.Repo,
-  username: System.get_env("PGUSER", "postgres"),
-  password: System.get_env("PGPASSWORD", "postgres"),
-  database: System.get_env("PGDATABASE", "moodledb"),
-  hostname: System.get_env("PGHOST", "localhost"),
-  show_sensitive_data_on_connection_error: true,
-  pool_size: 10
-
-
 # For production, don't forget to configure the url host
 # to something meaningful, Phoenix uses this information
 # when generating URLs.
@@ -20,8 +10,12 @@ config :moodle, Moodle.Repo,
 # which you should run after static files are built and
 # before starting your production server.
 config :moodle, MoodleWeb.Endpoint,
-  url: [host: "0.0.0.0", port: 80],
+
+  http: [port: {:system, "PORT"}],
+  url: [scheme: "https", host: "time-manger-backend.herokuapp.com", port: 443],
+  force_ssl: [rewrite_on: [:x_forwarded_proto]],
   cache_static_manifest: "priv/static/cache_manifest.json"
+
 
 # Do not print debug messages in production
 config :logger, level: :info
