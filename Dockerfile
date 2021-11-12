@@ -1,7 +1,5 @@
 FROM elixir:latest as build
 
-# install build dependencies
-RUN apk add --no-cache build-base npm git python3
 
 # prepare build dir
 WORKDIR /app
@@ -16,13 +14,13 @@ ENV MIX_ENV=prod
 # install mix dependencies
 COPY mix.exs mix.lock ./
 COPY config config
-RUN mix do deps.get, deps.compile
+RUN mix deps.get, deps.compile
 
 
 # compile and build release
 COPY lib lib
 
-RUN mix do compile, release
+RUN mix compile, release
 
 # prepare release image
 FROM alpine:3.14.2 AS app
