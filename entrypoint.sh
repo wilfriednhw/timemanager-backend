@@ -7,14 +7,17 @@ do
   sleep 2
 done
 
-# Install hex package manager
+echo "\n Install hex package manager..."
 mix local.hex --force
 mix local.rebar --force
 
-# Install deps
+echo "\n Install deps..."
 mix deps.get 
 
+echo "\n DB Create..."
 mix ecto.create
+
+echo "\n Migrations..."
 mix ecto.migrate
 mix run priv/repo/seeds.exs
 
