@@ -1,18 +1,19 @@
-#!/bin/sh
+#!/bin/bash
+# docker entrypoint script.
 
-
-# Wait until Postgres is ready
-while ! pg_isready -q -h $PGHOST -p $PGPORT -U $PGUSER
+# wait until Postgres is ready
+while ! pg_isready -q -d $DATABASE_URL
 do
   echo "$(date) - waiting for database to start"
   sleep 2
 done
 
+bin="/app/bin/hello_heroku"
 
-mix ecto.create
-mix ecto.migrate
-mix run priv/repo/seeds.exs
+# migrate the database
+echo "starting Migrations"
+eval "$bin eval \"HelloHeroku.Release.migrate\""
 
-echo "\n Launching Phoenix web server..."
-# Start the phoenix web server
-mix phx.server
+# start the elixir application
+echo "starting Application"
+exec "$bin" "start"
