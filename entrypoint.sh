@@ -7,6 +7,12 @@ do
   sleep 2
 done
 
+# Install hex package manager
+mix local.hex --force
+mix local.rebar --force
+
+# Install deps
+mix deps.get 
 
 mix ecto.create
 mix ecto.migrate
