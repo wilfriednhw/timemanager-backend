@@ -20,6 +20,7 @@ RUN mix deps.get, deps.compile
 # compile and build release
 COPY lib lib
 
+RUN mix deps.clean --all
 RUN mix compile, release
 
 # prepare release image
