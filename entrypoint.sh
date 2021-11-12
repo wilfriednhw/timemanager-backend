@@ -14,8 +14,8 @@ mix local.rebar --force
 echo "\n Install deps..."
 mix deps.get 
 
-echo "\n DB Create..."
-mix ecto.create
+# echo "\n DB Create..."
+# mix ecto.create
 
 echo "\n Migrations..."
 mix ecto.migrate
