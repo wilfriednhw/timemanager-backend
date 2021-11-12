@@ -17,6 +17,6 @@ RUN mix local.rebar --force
 # Install deps
 RUN mix deps.get 
 
-ENTRYPOINT ["entrypoint.sh"]
+ENTRYPOINT ["./entrypoint.sh"]
 
 # EXPOSE 7000 # Add this line for Dev
