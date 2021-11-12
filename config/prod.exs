@@ -12,7 +12,7 @@ import Config
 config :moodle, MoodleWeb.Endpoint,
 
   http: [port: {:system, "PORT"}],
-  url: [scheme: "https", host: "time-manger-backend.herokuapp.com", port: 443],
+  url: [scheme: "https", host: "dry-springs-13979.herokuapp.com", port: 443],
   force_ssl: [rewrite_on: [:x_forwarded_proto]],
   cache_static_manifest: "priv/static/cache_manifest.json"
 
