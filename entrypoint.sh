@@ -8,11 +8,11 @@ do
   sleep 2
 done
 
-bin="/app/bin/hello_heroku"
+bin="/app/bin/moodle"
 
 # migrate the database
 echo "starting Migrations"
-eval "$bin eval \"HelloHeroku.Release.migrate\""
+eval "$bin eval \"Moodle.Release.migrate\""
 
 # start the elixir application
 echo "starting Application"
