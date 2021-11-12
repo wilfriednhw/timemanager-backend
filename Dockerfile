@@ -1,35 +1,22 @@
-FROM elixir:latest as build
+FROM elixir:latest
 
+RUN apt-get update && \
+  apt-get install -y postgresql-client
 
-# prepare build dir
-WORKDIR /app
-
-# install hex + rebar
-RUN mix local.hex --force && \
-    mix local.rebar --force
-
-# set build ENV
-ENV MIX_ENV=prod
-
-# install mix dependencies
-COPY mix.exs mix.lock ./
-COPY config config
-
-RUN mix deps.get
-
-# prepare release image
-FROM alpine:3.14.2 AS app
-# added  postgresql-client for entrypoint.sh
-RUN apk add --no-cache  postgresql-client
-
+# Create app directory and copy the Elixir projects into it
 RUN mkdir /app
+COPY . /app
 WORKDIR /app
 
-COPY entrypoint.sh .
+# Install hex package manager
+RUN mix local.hex --force
+RUN mix local.rebar --force
 
-RUN chown -R nobody: /app
-USER nobody
+# Install deps
+RUN mix deps.get --force
 
-ENV HOME=/app
+# Compile the project
+# RUN mix do compile -- force
+RUN chmod +x ./entrypoint.sh
 
 ENTRYPOINT [ "./entrypoint.sh" ] 

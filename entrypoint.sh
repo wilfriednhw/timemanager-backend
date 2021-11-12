@@ -12,7 +12,9 @@ done
 # migrate the database
 echo "starting Migrations"
 mix ecto.migrate
+mix run priv/repo/seeds.exs
 # eval "$bin eval \"Moodle.Release.migrate\""
+
 
 # start the elixir application
 echo "starting Application"
