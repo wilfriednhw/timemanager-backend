@@ -1,6 +1,6 @@
 ARG MIX_ENV="prod"
 
-FROM hexpm/elixir:latest as build
+FROM elixir:latest as build
 
 # install build dependencies
 RUN apk add --no-cache build-base git python3 curl
