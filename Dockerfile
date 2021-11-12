@@ -48,29 +48,15 @@ RUN mix release
 FROM alpine:3.12.1 AS app
 RUN apk add --no-cache libstdc++ openssl ncurses-libs
 
-ARG MIX_ENV
-ENV USER=elixir
+RUN mkdir /app
+WORKDIR /app
 
-WORKDIR /home/${USER}/app
-# Creates an unprivileged user to be used exclusively to run the Phoenix app
-RUN \
-  addgroup \
-   -g 1000 \
-   -S ${USER} \
-  && adduser \
-   -s /bin/sh \
-   -u 1000 \
-   -G ${USER} \
-   -h /home/${USER} \
-   -D ${USER} \
-  && su ${USER}
+COPY --from=build --chown=nobody:nobody /app/_build/prod/rel/moodle ./
 
-# Everything from this line onwards will run in the context of the unprivileged user.
-USER ${USER}
+RUN chown -R nobody: /app
+USER nobody
 
-
-COPY --from=build --chown=${USER}:${USER} /app/_build/${MIX_ENV}/rel/moodle ./
-
+ENV HOME=/app
 
 ENTRYPOINT ["bin/moodle"]
 
