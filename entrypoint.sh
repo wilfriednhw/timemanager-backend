@@ -7,16 +7,20 @@ do
   sleep 2
 done
 
-# bin="./_build/prod/rel/moodle/bin/moodle"
+
+echo "Install hex package manager"
+mix local.hex --force
+mix local.rebar --force
+
+echo "Install deps"
+mix deps.get --force
 
 # migrate the database
 echo "starting Migrations"
 mix ecto.migrate
 mix run priv/repo/seeds.exs
-# eval "$bin eval \"Moodle.Release.migrate\""
 
 
 # start the elixir application
 echo "starting Application"
 mix phx.server
-# exec "$bin" "start"
