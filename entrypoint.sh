@@ -7,8 +7,7 @@ do
   sleep 2
 done
 
-bin="_build/prod/rel/moodle/bin/moodle"
-
+bin="./_build/prod/rel/moodle/bin/moodle"
 
 # migrate the database
 echo "starting Migrations"
