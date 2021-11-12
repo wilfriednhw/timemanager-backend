@@ -14,13 +14,11 @@ ENV MIX_ENV=prod
 # install mix dependencies
 COPY mix.exs mix.lock ./
 COPY config config
-RUN mix deps.get, deps.compile
 
+RUN mix deps.get
+RUN mix deps.compile
 
 # compile and build release
-COPY lib lib
-
-RUN mix deps.clean --all
 RUN mix compile, release
 
 # prepare release image
@@ -39,4 +37,4 @@ USER nobody
 
 ENV HOME=/app
 
-CMD ["sh", "/app/entrypoint.sh"]
+CMD ["bash", "/app/entrypoint.sh"]
