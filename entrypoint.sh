@@ -7,20 +7,12 @@ do
   sleep 2
 done
 
-echo "\n Install hex package manager..."
-mix local.hex --force
-mix local.rebar --force
+bin="/app/bin/moodle"
 
-echo "\n Install deps..."
-mix deps.get 
+# migrate the database
+echo "starting Migrations"
+eval "$bin eval \"HelloHeroku.Release.migrate\""
 
-# echo "\n DB Create..."
-# mix ecto.create
-
-echo "\n Migrations..."
-mix ecto.migrate
-mix run priv/repo/seeds.exs
-
-echo "\n Launching Phoenix web server..."
-# Start the phoenix web server
-mix phx.server
+# start the elixir application
+echo "starting Application"
+exec "$bin" "start"

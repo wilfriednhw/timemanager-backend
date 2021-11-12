@@ -1,16 +1,43 @@
+FROM elixir:latest as build
 
-# Use an official Elixir runtime as a parent image
-FROM elixir:latest
+# install build dependencies
+RUN apk add --no-cache build-base npm git python3
 
-RUN apt-get update && \
-  apt-get install -y postgresql-client
-
-# Create app directory and copy the Elixir projects into it
-RUN mkdir /app
-COPY . /app
+# prepare build dir
 WORKDIR /app
 
+# install hex + rebar
+RUN mix local.hex --force && \
+    mix local.rebar --force
 
-ENTRYPOINT ["./entrypoint.sh"]
+# set build ENV
+ENV MIX_ENV=prod
 
-# EXPOSE 7000 # Add this line for Dev
+# install mix dependencies
+COPY mix.exs mix.lock ./
+COPY config config
+RUN mix do deps.get, deps.compile
+
+
+# compile and build release
+COPY lib lib
+
+RUN mix do compile, release
+
+# prepare release image
+FROM alpine:3.14.2 AS app
+# added bash and postgresql-client for entrypoint.sh
+RUN apk add --no-cache openssl ncurses-libs bash postgresql-client
+
+RUN mkdir /app
+WORKDIR /app
+
+COPY --from=build --chown=nobody:nobody /app/_build/prod/rel/moodle ./
+COPY entrypoint.sh .
+
+RUN chown -R nobody: /app
+USER nobody
+
+ENV HOME=/app
+
+CMD ["sh", "/app/entrypoint.sh"]
