@@ -10,8 +10,8 @@ done
 
 # migrate the database
 echo "starting Migrations"
-mix ecto.migrate
+exec mix ecto.migrate
 
 # start the elixir application
 echo "starting Application"
-mix phx.server
+exec mix phx.server
