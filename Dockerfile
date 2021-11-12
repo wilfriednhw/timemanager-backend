@@ -38,4 +38,4 @@ USER nobody
 
 ENV HOME=/app
 
-CMD ["bash", "/app/entrypoint.sh"]
+ENTRYPOINT [ "/app/entrypoint.sh" ] 

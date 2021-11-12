@@ -7,12 +7,11 @@ do
   sleep 2
 done
 
-bin="/app/bin/moodle"
 
 # migrate the database
 echo "starting Migrations"
-eval "$bin eval \"Moodle.Release.migrate\""
+mix ecto.migrate
 
 # start the elixir application
 echo "starting Application"
-exec "$bin" "start"
+mix phx.server
