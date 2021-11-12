@@ -1,19 +1,18 @@
-#!/bin/bash
-# docker entrypoint script.
+#!/bin/sh
 
-# wait until Postgres is ready
-while ! pg_isready -q -d $DATABASE_URL
+
+# Wait until Postgres is ready
+while ! pg_isready -q -h $PGHOST -p $PGPORT -U $PGUSER
 do
   echo "$(date) - waiting for database to start"
   sleep 2
 done
 
-bin="/app/bin/moodle"
 
-# migrate the database
-echo "starting Migrations"
-eval "$bin eval \"Moodle.Release.migrate\""
+mix ecto.create
+mix ecto.migrate
+mix run priv/repo/seeds.exs
 
-# start the elixir application
-echo "starting Application"
-exec "$bin" "start"
+echo "\n Launching Phoenix web server..."
+# Start the phoenix web server
+mix phx.server
