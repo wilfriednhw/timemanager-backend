@@ -23,7 +23,7 @@ RUN mix do deps.get, deps.compile
 COPY lib lib
 # uncomment COPY if rel/ exists
 # COPY rel rel
-RUN mix do compile, release
+RUN mix do compile
 
 # prepare release image
 FROM alpine:3.14.2 AS app
