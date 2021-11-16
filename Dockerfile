@@ -1,4 +1,4 @@
-ARG MIX_ENV="dev"
+ARG MIX_ENV="prod"
 
 # build stage
 FROM hexpm/elixir:1.12.3-erlang-24.1.2-alpine-3.14.2 AS build
@@ -56,24 +56,24 @@ ENV USER="elixir"
 
 WORKDIR "/home/${USER}/app"
 
-# Create  unprivileged user to run the release
-RUN \
-  addgroup \
-   -g 1000 \
-   -S "${USER}" \
-  && adduser \
-   -s /bin/sh \
-   -u 1000 \
-   -G "${USER}" \
-   -h "/home/${USER}" \
-   -D "${USER}" \
-  && su "${USER}"
+# # Create  unprivileged user to run the release
+# RUN \
+#   addgroup \
+#    -g 1000 \
+#    -S "${USER}" \
+#   && adduser \
+#    -s /bin/sh \
+#    -u 1000 \
+#    -G "${USER}" \
+#    -h "/home/${USER}" \
+#    -D "${USER}" \
+#   && su "${USER}"
 
-# run as user
-USER "${USER}"
+# # run as user
+# USER "${USER}"
 
 # copy release executables
-COPY --from=build --chown="${USER}":"${USER}" /app/_build/"${MIX_ENV}"/rel/moodle ./
+COPY --from=build  /app/_build/"${MIX_ENV}"/rel/moodle ./
 
 ENTRYPOINT ["bin/moodle"]
 
