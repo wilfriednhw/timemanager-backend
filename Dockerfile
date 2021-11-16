@@ -78,7 +78,7 @@ COPY --from=build  /app/_build/"${MIX_ENV}"/rel/moodle ./
 COPY entrypoint.sh .
 
 # ENTRYPOINT ["bin/moodle","./entrypoint.sh"]
-CMD ["entrypoint.sh"]
+CMD ["./entrypoint.sh"]
 
 # RUN 
 # CMD ["start"]
