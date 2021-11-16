@@ -1,26 +1,28 @@
 #!/bin/sh
+# Docker entrypoint script.
 
 
-while ! pg_isready -q -d $DATABASE_URL
+# Wait until Postgres is ready
+while ! pg_isready -q -h $PGHOST -p $PGPORT -U $PGUSER
 do
-  echo "$(date) - waiting for database to start"
-  sleep 2
+    echo "$(date) - waiting for database to start"
+    sleep 2
 done
+# Create, migrate, and seed database if it doesn't exist.
+if [[ -z `psql -Atqc "\\list $PGDATABASE"` ]]; then
+    echo "Database $PGDATABASE does not exist. Creating..."
+    createdb -E UTF8 $PGDATABASE -l en_US.UTF-8 -T template0
+    echo "Database $PGDATABASE created."
+fi
 
 
-echo "Install hex package manager"
-mix local.hex --force
-mix local.rebar --force
+# echo $PWD
+# exec ls
+# # Sets up tables and running migrations.
 
-echo "Install deps"
-mix deps.get --force
+# # eval "Moodle.Release.migrate"
 
-# migrate the database
-echo "starting Migrations"
-mix ecto.migrate
-mix run priv/repo/seeds.exs
+# # Start our app
+# # exec start
 
 
-# start the elixir application
-echo "starting Application"
-mix phx.server

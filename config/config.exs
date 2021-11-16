@@ -13,9 +13,10 @@ config :moodle,
 # Configures the endpoint
 config :moodle, MoodleWeb.Endpoint,
   url: [host: "localhost"],
-  render_errors: [view: MoodleWeb.ErrorView, accepts: ~w(html json), layout: false],
+  render_errors: [view: MoodleWeb.ErrorView, accepts: ~w(json), layout: false],
   pubsub_server: Moodle.PubSub,
   live_view: [signing_salt: "IWkyWcUW"]
+
 
 # Configures the mailer
 #
