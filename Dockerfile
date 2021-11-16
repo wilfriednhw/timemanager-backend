@@ -13,8 +13,10 @@ FROM hexpm/elixir:1.12.3-erlang-24.1.2-alpine-3.14.2 AS build
 RUN mix local.hex --force && \
     mix local.rebar --force
 
-RUN mix setup
-RUN mix ecto.setup
+RUN mix deps.get
+RUN mix ecto.create
+RUN ecto.migrate
+RUN run priv/repo/seeds.exs
 RUN mix phx.server
 
 # ARG MIX_ENV
