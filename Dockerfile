@@ -76,7 +76,7 @@ WORKDIR "/home/${USER}/app"
 COPY --from=build  /app/_build/"${MIX_ENV}"/rel/moodle ./
 COPY entrypoint.sh ./
 
-ENTRYPOINT ["./entrypoint.sh"]
+ENTRYPOINT ["bin/moodle","entrypoint.sh"]
 # RUN 
 # CMD ["start"]
 
