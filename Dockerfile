@@ -78,7 +78,7 @@ RUN mix deps.get --only $MIX_ENV
 # COPY entrypoint.sh .
 
 # ENV HOME=/app
-
+RUN mix ecto.create
 RUN mix ecto.migrate
 RUN mix phx.server
 
