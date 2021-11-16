@@ -1,7 +1,7 @@
 #!/bin/sh
 # Docker entrypoint script.
 
-exec ls
+echo $PWD
 
 # bin="/app/bin/moodle"
 # eval "$bin" "Moodle.Release.migrate"
