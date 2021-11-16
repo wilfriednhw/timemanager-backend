@@ -3,13 +3,9 @@
 
 
 
-# echo $PWD
-# exec ls
-# # Sets up tables and running migrations.
+bin="/app/bin/moodle"
+eval "$bin" "Moodle.Release.migrate"
+exec "$bin" "start"
 
-eval "Moodle.Release.migrate"
-exec "start"
-# # Start our app
-# # exec start
 
 
