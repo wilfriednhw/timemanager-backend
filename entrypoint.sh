@@ -1,7 +1,7 @@
 #!/bin/sh
 # Docker entrypoint script.
 
-cd /releases
+cd /_build
 ls
 
 # bin="/app/bin/moodle"
