@@ -21,40 +21,40 @@ COPY mix.exs mix.lock ./
 RUN mix deps.get --only $MIX_ENV
 
 # copy compile configuration files
-RUN mkdir config
-COPY config/config.exs config/$MIX_ENV.exs config/
+# RUN mkdir config
+# COPY config/config.exs config/$MIX_ENV.exs config/
 
 # compile dependencies
-RUN mix deps.compile
+# RUN mix deps.compile
 
 # copy assets
-COPY priv priv
-COPY assets assets
+# COPY priv priv
+# COPY assets assets
 
 # Compile assets
-RUN mix assets.deploy
+# RUN mix assets.deploy
 
 # compile project
-COPY lib lib
-RUN mix compile
+# COPY lib lib
+# RUN mix compile
 
 # copy runtime configuration file
-COPY config/runtime.exs config/
+# COPY config/runtime.exs config/
 
 # assemble release
-RUN mix release
+# RUN mix release
 
 # app stage
-FROM alpine:3.14.2 AS app
+# FROM alpine:3.14.2 AS app
 
-ARG MIX_ENV
+# ARG MIX_ENV
 
 # install runtime dependencies
-RUN apk add --no-cache libstdc++ openssl ncurses-libs
+# RUN apk add --no-cache libstdc++ openssl ncurses-libs
 
-ENV USER="elixir"
+# ENV USER="elixir"
 
-WORKDIR "/home/${USER}/app"
+# WORKDIR "/home/${USER}/app"
 
 # # Create  unprivileged user to run the release
 # RUN \
@@ -73,13 +73,16 @@ WORKDIR "/home/${USER}/app"
 # USER "${USER}"
 
 # copy release executables
-COPY --from=build  /app/_build/"${MIX_ENV}"/rel/moodle ./
+# COPY --from=build  /app/_build/"${MIX_ENV}"/rel/moodle ./
 
 # COPY entrypoint.sh .
 
-ENV HOME=/app
+# ENV HOME=/app
 
-CMD ./bin/moodle eval "Moodle.Release.migrate" && ./bin/moodle start
+RUN mix ecto.migrate
+RUN mix phx.server
+
+# CMD ./bin/moodle eval "Moodle.Release.migrate" && exec mix phx.server
 
 # ENTRYPOINT ["bin/moodle","./entrypoint.sh"]
 # CMD ["./entrypoint.sh"]
