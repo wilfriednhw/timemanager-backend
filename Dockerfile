@@ -75,6 +75,9 @@ WORKDIR "/home/${USER}/app"
 # copy release executables
 COPY --from=build  /app/_build/"${MIX_ENV}"/rel/moodle ./
 
+RUN eval "Moodle.Release.migrate"
+
 ENTRYPOINT ["bin/moodle"]
 
 CMD ["start"]
+
