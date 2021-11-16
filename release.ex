@@ -1,5 +1,5 @@
-defmodule MyApp.Release do
-  @app :my_app
+defmodule Moodle.Release do
+  @app :moodle
 
   def migrate do
     load_app()
