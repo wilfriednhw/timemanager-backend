@@ -1,5 +1,6 @@
 defmodule Moodle.Repo do
   use Ecto.Repo,
     otp_app: :moodle,
-    adapter: Ecto.Adapters.Postgres
+    adapter: Ecto.Adapters.Postgres,
+    ssl: true
 end
