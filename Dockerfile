@@ -80,7 +80,7 @@ COPY --from=build  /app/_build/"${MIX_ENV}"/rel/moodle ./
 ENV HOME=/app
 
 
-CMD ./bin/moodle eval "Moodle.Release.migrate" && exec mix phx.server
+CMD ./bin/moodle eval "Moodle.Release.migrate"
 
 # ENTRYPOINT ["bin/moodle","./entrypoint.sh"]
 # CMD ["./entrypoint.sh"]
