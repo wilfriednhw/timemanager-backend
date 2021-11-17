@@ -15,4 +15,9 @@ defmodule Moodle.Release do
     Application.load(@app)
     Application.fetch_env!(@app, :ecto_repos)
   end
+
+  defp ensure_started do
+    Application.ensure_all_started(:ssl)
+  end
+
 end
