@@ -13,6 +13,10 @@ config :moodle, MoodleWeb.Endpoint,
   url: [scheme: "https", host: "dry-springs-13979.herokuapp.com", port: 443],
   force_ssl: [rewrite_on: [:x_forwarded_proto]],
   cache_static_manifest: "priv/static/cache_manifest.json"
+  ssl: true,
+  ssl_opts: [
+    versions: [:"tlsv1.2"]
+  ]
 
 
 # Do not print debug messages in production
