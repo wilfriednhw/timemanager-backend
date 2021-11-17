@@ -1,30 +1,90 @@
-# Use an official Elixir runtime as a parent image
-FROM elixir:latest
+ARG MIX_ENV="prod"
 
-RUN MIX_ENV="prod"
+# build stage
+FROM hexpm/elixir:1.12.3-erlang-24.1.2-alpine-3.14.2 AS build
 
-# RUN apt-get update && \
-#   apt-get install -y postgresql-client
+# install build dependencies
+RUN apk add --no-cache build-base git python3 curl
 
-# Create app directory and copy the Elixir projects into it
-RUN mkdir /app
-COPY . /app
+# sets work dir
 WORKDIR /app
 
-# Install hex package manager
-RUN mix local.hex --force
-RUN mix local.rebar --force
+# install hex + rebar
+RUN mix local.hex --force && \
+    mix local.rebar --force
 
-# Install deps
-RUN mix deps.get 
+ARG MIX_ENV
+ENV MIX_ENV="${MIX_ENV}"
 
-RUN mix ecto.migrate
-RUN mix run priv/repo/seeds.exs
-RUN mix phx.server
+# install mix dependencies
+COPY mix.exs mix.lock ./
+RUN mix deps.get --only $MIX_ENV
 
-# Compile the project
-# RUN mix do compile -- force
-# RUN chmod +x ./entrypoint.sh
-# ENTRYPOINT ["/bin/bash", "./entrypoint.sh"]
+# copy compile configuration files
+RUN mkdir config
+COPY config/config.exs config/$MIX_ENV.exs config/
 
-# EXPOSE 7000
+# compile dependencies
+RUN mix deps.compile
+
+# copy assets
+COPY priv priv
+COPY assets assets
+
+# Compile assets
+RUN mix assets.deploy
+
+# compile project
+COPY lib lib
+RUN mix compile
+
+# copy runtime configuration file
+COPY config/runtime.exs config/
+
+# assemble release
+RUN mix release
+
+# app stage
+FROM alpine:3.14.2 AS app
+
+ARG MIX_ENV
+
+# install runtime dependencies
+RUN apk add --no-cache libstdc++ openssl ncurses-libs
+
+ENV USER="elixir"
+
+WORKDIR "/home/${USER}/app"
+
+# # Create  unprivileged user to run the release
+# RUN \
+#   addgroup \
+#    -g 1000 \
+#    -S "${USER}" \
+#   && adduser \
+#    -s /bin/sh \
+#    -u 1000 \
+#    -G "${USER}" \
+#    -h "/home/${USER}" \
+#    -D "${USER}" \
+#   && su "${USER}"
+
+# # run as user
+# USER "${USER}"
+
+# copy release executables
+COPY --from=build  /app/_build/"${MIX_ENV}"/rel/moodle ./
+
+# COPY entrypoint.sh .
+
+ENV HOME=/app
+
+
+CMD ./bin/moodle eval "Moodle.Release.migrate" && exec mix phx.server
+
+# ENTRYPOINT ["bin/moodle","./entrypoint.sh"]
+# CMD ["./entrypoint.sh"]
+
+# RUN 
+# CMD ["start"]
+
