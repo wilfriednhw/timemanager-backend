@@ -79,8 +79,8 @@ COPY --from=build  /app/_build/"${MIX_ENV}"/rel/moodle ./
 
 ENV HOME=/app
 
-
-CMD _build/prod/rel/moodle/bin/moodle eval "Moodle.Release.migrate" 
+RUN ls
+# CMD _build/prod/rel/moodle/bin/moodle eval "Moodle.Release.migrate" 
 # &&  ./bin/moodle start
 # CMD ./bin/moodle start
 # ENTRYPOINT ["bin/moodle","./entrypoint.sh"]
